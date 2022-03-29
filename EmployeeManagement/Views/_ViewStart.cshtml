@@ -1,0 +1,14 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+@*@if (User.IsInRole("Admin"))
+    {
+        //do something
+        Layout = "_AdminLayout";
+    }
+    else
+    {
+        //do something else
+        Layout = "_NormalLayout";
+    }*@

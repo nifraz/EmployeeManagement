@@ -1,0 +1,23 @@
+﻿<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Home - Details</title>
+</head>
+<body>
+    <h3>@ViewData["PageTitle"]</h3>
+    @{
+    var emp = ViewData["Employee"] as EmployeeManagement.Models.Employee;
+    }
+    <div>
+        ID: @emp?.Id
+    </div>
+    <div>
+        Name: @emp?.Name
+    </div>
+    <div>
+        Department: @emp?.Department
+    </div>
+    <div>
+        Email: @emp?.Email
+    </div>
+</body>
+</html>
