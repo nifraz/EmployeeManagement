@@ -1,11 +1,11 @@
-﻿@model Employee
-@inject IEmployeeRepository _employeeRepository
+﻿@model EmployeeCreateViewModel
+@*@inject IEmployeeRepository _employeeRepository*@
 
 @{ 
     ViewBag.Title = "Add Employee";
 }
 
-<form asp-controller="Home" asp-action="Create" method="post">
+<form enctype="multipart/form-data" asp-controller="Home" asp-action="Create" method="post">
     <div class="row">
         <div class="col-sm-6 mt-2">
             <label asp-for="Name" class="form-label"></label>
@@ -24,16 +24,20 @@
             </select>
             <span class="form-text text-danger" asp-validation-for="Department"></span>
         </div>
+        <div class="col-sm-6 mt-2">
+            <label asp-for="Photo" class="form-label"></label>
+            <input asp-for="Photo" class="form-control" />
+        </div>
     </div>
     <div class="row">
-        <div asp-validation-summary="All" class="col-12 text-danger mt-2"></div>
+        <div asp-validation-summary="All" class="col-12 text-success mt-2"></div>
         <div class="col-12 mt-2">
             <button class="btn btn-success" type="submit">Save</button>
         </div>
     </div>
-    <div class="row">
+    @*<div class="row">
         <div class="col-12 mt-2">
             The Employee count is: @_employeeRepository.GetAll().Count();
         </div>
-    </div>
+    </div>*@
 </form>

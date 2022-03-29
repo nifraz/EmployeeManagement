@@ -1,8 +1,10 @@
 ﻿using EmployeeManagement.Models;
 using EmployeeManagement.ViewModels;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,11 +13,13 @@ namespace EmployeeManagement.Controllers
     //[Route("[controller]/[action]")]
     public class HomeController : Controller
     {
-        private readonly IEmployeeRepository _employeeRepository;
+        private readonly IEmployeeRepository employeeRepository;
+        private readonly IWebHostEnvironment webHostEnvironment;
 
-        public HomeController(IEmployeeRepository employeeRepository)
+        public HomeController(IEmployeeRepository employeeRepository, IWebHostEnvironment webHostEnvironment)
         {
-            _employeeRepository = employeeRepository;
+            this.employeeRepository = employeeRepository;
+            this.webHostEnvironment = webHostEnvironment;
         }
 
         //[Route("~/")]
@@ -23,7 +27,7 @@ namespace EmployeeManagement.Controllers
         //[Route("~/Home")]
         public ViewResult Index()
         {
-            return View(_employeeRepository.GetAll());
+            return View(employeeRepository.GetAll());
         }
 
         //[Route("{id?}")]
@@ -50,7 +54,7 @@ namespace EmployeeManagement.Controllers
 
             var homeDetailsViewModel = new HomeDetailsViewModel()
             {
-                Employee = _employeeRepository.Get(id ?? 1),
+                Employee = employeeRepository.Get(id ?? 1),
                 PageTitle = "Employee Details"
             };
             return View(homeDetailsViewModel);
@@ -63,12 +67,45 @@ namespace EmployeeManagement.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Employee employee)
+        public IActionResult Create(EmployeeCreateViewModel model)
         {
             if (ModelState.IsValid)
             {
-                _employeeRepository.Add(employee);
-                //return RedirectToAction("Details", new { employee.Id });
+                string uniqueFileName = null;
+                if (model.Photo != default)
+                {
+                    var uploadFolder = Path.Combine(webHostEnvironment.WebRootPath, "images");
+                    uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(model.Photo.FileName);
+                    var filePath = Path.Combine(uploadFolder, uniqueFileName);
+
+                    using var fileStream = new FileStream(filePath, FileMode.Create);
+                    model.Photo.CopyTo(fileStream);
+                }
+
+                //for multiple
+                //if (model.Photos != default && model.Photos.Count > 0)
+                //{
+                //    foreach (var item in model.Photos)
+                //    {
+                //        var uploadFolder = Path.Combine(webHostEnvironment.WebRootPath, "images");
+                //        uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(item.FileName);
+                //        var filePath = Path.Combine(uploadFolder, uniqueFileName);
+
+                //        using var fileStream = new FileStream(filePath, FileMode.Create);
+                //        item.CopyTo(fileStream);
+                //    }
+                //}
+
+                var employee = new Employee()
+                {
+                    Name = model.Name,
+                    Email = model.Email,
+                    Department = model.Department,
+                    PhotoName = uniqueFileName
+                };
+
+                employeeRepository.Add(employee);
+                return RedirectToAction("Details", new { employee.Id });
             }
 
             return View();

@@ -3,15 +3,18 @@
     ViewBag.Title = "Employee List";
 }
 
-<div class="row mt-3">
+<div class="row g-0">
     @foreach (var item in Model)
     {
+        var photoPath = "~/images/" + (item?.PhotoName ?? "user.svg");
     <div class="col-sm-4">
-        <div class="card">
+        <div class="card m-3">
             <div class="card-header">
                 <h5>@item.Name</h5>
             </div>
-            <img class="card-img" src="~/images/user1.svg" alt="User" asp-append-version="true" />
+            <div class="card-body">
+                <img class="card-img" src="@photoPath" alt="@(item?.PhotoName ?? "No image")" asp-append-version="true" />
+            </div>
             <div class="card-footer text-center">
                 @*<a href="@Url.Action("Details", "Home", new { Id = item.Id })" class="btn btn-success">Show</a>
                 @Html.ActionLink("View", "Details", "Home", new { Id = item.Id})
