@@ -1,0 +1,25 @@
+﻿@{
+    ViewBag.Title = "Error";
+}
+
+<h3>Some error occured and we are trying to fix that.</h3>
+<h5>Please contact <a href="mailto:nifraz@live.com">nifraz@live.com</a>. Sorry for that.</h5>
+<hr />
+
+<div class="alert alert-danger my-3">
+    <h5>Path:</h5>
+    <hr />
+    <h6>@ViewBag.Path</h6>
+</div>
+
+<div class="alert alert-danger my-3">
+    <h5>Error Message:</h5>
+    <hr />
+    <h6>@ViewBag.Msg</h6>
+</div>
+
+<div class="alert alert-danger my-3">
+    <h5>Stack Trace:</h5>
+    <hr />
+    <h6>@ViewBag.StackTrace</h6>
+</div>
