@@ -52,12 +52,12 @@ namespace EmployeeManagement.Controllers
 
             ///// using strongly typed viewmodel
 
-            var homeDetailsViewModel = new HomeDetailsViewModel()
+            var employeeDetailsViewModel = new EmployeeDetailsViewModel()
             {
                 Employee = employeeRepository.Get(id ?? 1),
                 PageTitle = "Employee Details"
             };
-            return View(homeDetailsViewModel);
+            return View(employeeDetailsViewModel);
         }
 
         [HttpGet]
@@ -71,16 +71,7 @@ namespace EmployeeManagement.Controllers
         {
             if (ModelState.IsValid)
             {
-                string uniqueFileName = null;
-                if (model.Photo != default)
-                {
-                    var uploadFolder = Path.Combine(webHostEnvironment.WebRootPath, "images");
-                    uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(model.Photo.FileName);
-                    var filePath = Path.Combine(uploadFolder, uniqueFileName);
-
-                    using var fileStream = new FileStream(filePath, FileMode.Create);
-                    model.Photo.CopyTo(fileStream);
-                }
+                string uniqueFileName = ProcessUploadedImage(model);
 
                 //for multiple
                 //if (model.Photos != default && model.Photos.Count > 0)
@@ -105,6 +96,65 @@ namespace EmployeeManagement.Controllers
                 };
 
                 employeeRepository.Add(employee);
+                return RedirectToAction("Details", new { employee.Id });
+            }
+
+            return View();
+        }
+
+        private string ProcessUploadedImage(EmployeeCreateViewModel model)
+        {
+            string uniqueFileName = default;
+            if (model.Photo != default)
+            {
+                var uploadFolder = Path.Combine(webHostEnvironment.WebRootPath, "images");
+                uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(model.Photo.FileName);
+                var filePath = Path.Combine(uploadFolder, uniqueFileName);
+
+                using var fileStream = new FileStream(filePath, FileMode.Create);
+                model.Photo.CopyTo(fileStream);
+            }
+
+            return uniqueFileName;
+        }
+
+        [HttpGet]
+        public ViewResult Edit(int? id)
+        {
+            var employee = employeeRepository.Get(id ?? 1);
+            var employeeEditViewModel = new EmployeeEditViewModel()
+            {
+                Id = employee.Id,
+                Name = employee.Name,
+                Email = employee.Email,
+                Department = employee.Department,
+                ExistingPhotoName = employee.PhotoName
+            };
+
+            return View(employeeEditViewModel);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(EmployeeEditViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var employee = employeeRepository.Get(model.Id);
+                employee.Name = model.Name;
+                employee.Email = model.Email;
+                employee.Department = model.Department;
+
+                if (model.Photo != default)
+                {
+                    if (model.ExistingPhotoName != default)
+                    {
+                        var photoPath = Path.Combine(webHostEnvironment.WebRootPath, "images", model.ExistingPhotoName);
+                        System.IO.File.Delete(photoPath);
+                    }
+                    employee.PhotoName = ProcessUploadedImage(model);
+                }
+
+                employeeRepository.Update(employee);
                 return RedirectToAction("Details", new { employee.Id });
             }
 
