@@ -35,6 +35,7 @@ namespace EmployeeManagement.Controllers
         public ViewResult Details(int id)
         {
             throw new Exception("Error in Details.");
+
             //var emp = _employeeRepository.Get(1);
             //return View("~/MyViews/Test.cshtml"); //absolute path requires extension
             //return View("../../MyViews/Test");  //relative path does not require extension
