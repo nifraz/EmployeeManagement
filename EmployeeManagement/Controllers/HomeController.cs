@@ -2,6 +2,7 @@
 using EmployeeManagement.ViewModels;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,11 +17,13 @@ namespace EmployeeManagement.Controllers
     {
         private readonly IEmployeeRepository employeeRepository;
         private readonly IWebHostEnvironment webHostEnvironment;
+        private readonly ILogger logger;
 
-        public HomeController(IEmployeeRepository employeeRepository, IWebHostEnvironment webHostEnvironment)
+        public HomeController(IEmployeeRepository employeeRepository, IWebHostEnvironment webHostEnvironment, ILogger<HomeController> logger)
         {
             this.employeeRepository = employeeRepository;
             this.webHostEnvironment = webHostEnvironment;
+            this.logger = logger;
         }
 
         //[Route("~/")]
@@ -34,7 +37,14 @@ namespace EmployeeManagement.Controllers
         //[Route("{id?}")]
         public ViewResult Details(int id)
         {
-            throw new Exception("Error in Details.");
+            //throw new Exception("Error in Details.");
+
+            logger.LogTrace("Trace Log");
+            logger.LogDebug("Debug Log");
+            logger.LogInformation("Information Log");
+            logger.LogWarning("Warning Log");
+            logger.LogError("Error Log");
+            logger.LogCritical("Critical Log");
 
             //var emp = _employeeRepository.Get(1);
             //return View("~/MyViews/Test.cshtml"); //absolute path requires extension
@@ -65,7 +75,7 @@ namespace EmployeeManagement.Controllers
 
             var employeeDetailsViewModel = new EmployeeDetailsViewModel()
             {
-                Employee = employeeRepository.Get(id),
+                Employee = employee,
                 //PageTitle = "Employee Details"
             };
             return View(employeeDetailsViewModel);
