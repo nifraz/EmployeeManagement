@@ -2,6 +2,7 @@ using EmployeeManagement.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,6 +29,19 @@ namespace EmployeeManagement
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContextPool<EmDbContext>(o => o.UseSqlServer(_config.GetConnectionString("EmDbConnection")));
+            services.AddIdentity<IdentityUser, IdentityRole>(o =>
+            {
+                o.Password.RequiredLength = 10;
+                o.Password.RequiredUniqueChars = 3;
+                o.Password.RequireDigit = false;
+            }).AddEntityFrameworkStores<EmDbContext>();
+
+            ///// does the same thing as above
+            //services.Configure<IdentityOptions>(o =>
+            //{
+            //    o.Password.RequiredLength = 10;
+            //    o.Password.RequiredUniqueChars = 3;
+            //});
 
             services.AddMvc(options => options.EnableEndpointRouting = false);
             //services.AddMvcCore(options => options.EnableEndpointRouting = false).AddXmlSerializerFormatters();
@@ -51,6 +65,7 @@ namespace EmployeeManagement
 
             app.UseStaticFiles();
             //app.UseMvcWithDefaultRoute();
+            app.UseAuthentication();
 
             app.UseMvc(r =>
             {
