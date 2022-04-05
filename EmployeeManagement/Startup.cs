@@ -1,8 +1,10 @@
 using EmployeeManagement.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -43,9 +45,13 @@ namespace EmployeeManagement
             //    o.Password.RequiredUniqueChars = 3;
             //});
 
-            services.AddMvc(options => options.EnableEndpointRouting = false);
+            services.AddMvc(options => {
+                var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+                options.Filters.Add(new AuthorizeFilter(policy));
+                options.EnableEndpointRouting = false;
+            });
             //services.AddMvcCore(options => options.EnableEndpointRouting = false).AddXmlSerializerFormatters();
-
+            services.ConfigureApplicationCookie(o => o.LoginPath = new PathString("/Account/Login"));   //configure login path
             //var serviceDescriptor = new ServiceDescriptor(typeof(IEmployeeRepository), typeof(MockEmployeeRepository), ServiceLifetime.Singleton);
             services.AddScoped<IEmployeeRepository, SqlEmployeeRepository>();
         }
