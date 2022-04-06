@@ -27,6 +27,20 @@ namespace EmployeeManagement.Controllers
             return View();
         }
 
+        [HttpGet]
+        [HttpPost] //or use [AcceptVerbs("Get", "Post")] for handling multiple http methods
+        [AllowAnonymous]
+        public async Task<IActionResult> IsEmailAvailable(string email)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+
+            if (user == default)
+            {
+                return Json(true);
+            }
+            return Json($"Username '{email}' is already taken.");
+        }
+
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> Register(RegisterViewModel model)

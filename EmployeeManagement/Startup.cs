@@ -33,6 +33,7 @@ namespace EmployeeManagement
             services.AddDbContextPool<EmDbContext>(o => o.UseSqlServer(_config.GetConnectionString("EmDbConnection")));
             services.AddIdentity<IdentityUser, IdentityRole>(o =>
             {
+                o.User.RequireUniqueEmail = true;
                 o.Password.RequiredLength = 10;
                 o.Password.RequiredUniqueChars = 3;
                 o.Password.RequireDigit = false;
