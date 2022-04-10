@@ -21,6 +21,10 @@
             <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm Password" />
             <span class="form-text text-danger" asp-validation-for="ConfirmPassword"></span>
         </div>
+        <div class="col-12 mt-2">
+            <label asp-for="City" class="form-label"></label>
+            <input asp-for="City" class="form-control" placeholder="City" />
+        </div>
     </div>
     <div class="row">
         <div asp-validation-summary="All" class="col-12 text-danger mt-2"></div>

@@ -31,7 +31,7 @@ namespace EmployeeManagement
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContextPool<EmDbContext>(o => o.UseSqlServer(_config.GetConnectionString("EmDbConnection")));
-            services.AddIdentity<IdentityUser, IdentityRole>(o =>
+            services.AddIdentity<ApplicationUser, IdentityRole>(o =>
             {
                 o.User.RequireUniqueEmail = true;
                 o.Password.RequiredLength = 10;
@@ -47,8 +47,9 @@ namespace EmployeeManagement
             //});
 
             services.AddMvc(options => {
-                var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
-                options.Filters.Add(new AuthorizeFilter(policy));
+                options.Filters.Add(    //enable global authorization
+                    new AuthorizeFilter(
+                        new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build()));
                 options.EnableEndpointRouting = false;
             });
             //services.AddMvcCore(options => options.EnableEndpointRouting = false).AddXmlSerializerFormatters();

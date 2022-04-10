@@ -1,0 +1,25 @@
+﻿@model RoleCreateViewModel
+
+@{
+    ViewBag.Title = "Create Role";
+}
+<h3>Create Role</h3>
+<form method="post">
+    <div class="row">
+        <div class="col-12 mt-2">
+            <label asp-for="RoleName" class="form-label"></label>
+            <input asp-for="RoleName" class="form-control" placeholder="Role Name" />
+            <span class="form-text text-danger" asp-validation-for="RoleName"></span>
+        </div>
+    </div>
+    <div class="row">
+        <div asp-validation-summary="All" class="col-12 text-danger mt-2"></div>
+        <div class="col-12 mt-2">
+            <button class="btn btn-success" type="submit">Create</button>
+        </div>
+    </div>
+</form>
+
+@*@section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }*@
