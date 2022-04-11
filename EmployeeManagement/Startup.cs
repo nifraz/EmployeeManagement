@@ -34,7 +34,7 @@ namespace EmployeeManagement
             services.AddIdentity<ApplicationUser, IdentityRole>(o =>
             {
                 o.User.RequireUniqueEmail = true;
-                o.Password.RequiredLength = 10;
+                o.Password.RequiredLength = 4;
                 o.Password.RequiredUniqueChars = 3;
                 o.Password.RequireDigit = false;
             }).AddEntityFrameworkStores<EmDbContext>();
@@ -74,6 +74,7 @@ namespace EmployeeManagement
             app.UseStaticFiles();
             //app.UseMvcWithDefaultRoute();
             app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseMvc(r =>
             {

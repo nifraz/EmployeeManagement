@@ -18,6 +18,7 @@
             asp-suppress-fallback-integrity="true">
         </environment>*@
     <link href="~/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
     <script src="~/lib/jquery/jquery.js"></script>
     <script src="~/lib/jquery-validate/jquery.validate.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
@@ -41,6 +42,12 @@
                     <li class="nav-item">
                         <a class="nav-link" asp-controller="Home" asp-action="Create">Create</a>
                     </li>
+                    @if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Administration" asp-action="ListRoles">Manage Roles</a>
+                        </li>
+                    }
                 </ul>
                 <ul class="navbar-nav ms-auto">
                     @if (signInManager.IsSignedIn(User)) //or use User.Identity.IsAuthenticated
@@ -66,9 +73,9 @@
             </div>
         </div>
     </header>
-    <div class="container-fluid">
+    <section class="container-fluid">
         @RenderBody()
-    </div>
+    </section>
     @if (IsSectionDefined("Scripts"))
     {
         @RenderSection("Scripts")
@@ -76,15 +83,15 @@
     @*@RenderSection("Script", required: false)*@
 
     @*<environment include="Development">
-        <script src="~/lib/bootstrap/js/bootstrap.bundle.js"></script>
-    </environment>
-    <environment exclude="Development">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.js" integrity="sha256-htsAUOIgN8xkootpQUzmvaCbQo6x2PNMTD7kLWI6yYQ=" crossorigin="anonymous"
-                asp-fallback-src="~/lib/bootstrap/js/bootstrap.bundle.min.js"
-                asp-fallback-test="window.bootstrap"
-                asp-suppress-fallback-integrity="true">
-        </script>
-    </environment>*@
+            <script src="~/lib/bootstrap/js/bootstrap.bundle.js"></script>
+        </environment>
+        <environment exclude="Development">
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.js" integrity="sha256-htsAUOIgN8xkootpQUzmvaCbQo6x2PNMTD7kLWI6yYQ=" crossorigin="anonymous"
+                    asp-fallback-src="~/lib/bootstrap/js/bootstrap.bundle.min.js"
+                    asp-fallback-test="window.bootstrap"
+                    asp-suppress-fallback-integrity="true">
+            </script>
+        </environment>*@
     <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
