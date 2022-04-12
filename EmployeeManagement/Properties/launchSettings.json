@@ -13,7 +13,7 @@
       "launchBrowser": true,
       "environmentVariables": {
         "MyKey": "Value from EnvironmentVariable.",
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Production"
       }
     },
     "EmployeeManagement": {
