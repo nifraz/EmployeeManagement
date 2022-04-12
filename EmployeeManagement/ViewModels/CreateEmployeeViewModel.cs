@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeManagement.ViewModels
 {
-    public class EmployeeCreateViewModel
+    public class CreateEmployeeViewModel
     {
         [Required]
         [MaxLength(64, ErrorMessage = "Name cannot exceed 64 characters.")]

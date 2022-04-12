@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeManagement.ViewModels
 {
-    public class RoleEditViewModel
+    public class EditRoleViewModel
     {
         public string Id { get; set; }
         [Required]
@@ -14,7 +14,7 @@ namespace EmployeeManagement.ViewModels
         public string RoleName { get; set; }
         public IList<string> Users { get; set; }
 
-        public RoleEditViewModel()
+        public EditRoleViewModel()
         {
             Users = new List<string>();
         }

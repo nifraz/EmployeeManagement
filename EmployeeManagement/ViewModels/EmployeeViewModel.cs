@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeManagement.ViewModels
 {
-    public class EmployeeDetailsViewModel
+    public class EmployeeViewModel
     {
         public Employee Employee { get; set; }
         public string PageTitle { get; set; }

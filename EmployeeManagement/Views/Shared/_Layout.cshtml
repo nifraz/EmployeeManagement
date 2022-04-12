@@ -26,7 +26,7 @@
     <title>@ViewBag.Title</title>
 </head>
 <body>
-    <header class="sticky-top">
+    <header class="sticky-top shadow">
         <div class="navbar navbar-dark bg-dark navbar-expand-sm px-3">
             <a class="navbar-brand" asp-controller="Home" asp-action="Index">
                 <img src="~/images/people.png" alt="Employees Logo" asp-append-version="true" height="35" />
@@ -44,8 +44,14 @@
                     </li>
                     @if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
                     {
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Administration" asp-action="ListRoles">Manage Roles</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Manage
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" asp-action="ListUsers" asp-controller="Administration">Users</a></li>
+                                <li><a class="dropdown-item" asp-action="ListRoles" asp-controller="Administration">Roles</a></li>
+                            </ul>
                         </li>
                     }
                 </ul>
@@ -54,7 +60,7 @@
                     {
                         <li class="nav-item">
                             <form id="logout" asp-action="Logout" asp-controller="Account" method="post">
-                                <button type="submit" class="nav-link btn btn-link" style="width: auto;">
+                                <button type="submit" class="nav-link btn btn-link">
                                     Logout (@User.Identity.Name)
                                 </button>
                             </form>

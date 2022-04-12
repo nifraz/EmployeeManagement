@@ -1,0 +1,90 @@
+﻿@model EditUserViewModel
+
+@{
+    ViewBag.Title = "Edit User";
+}
+<h4>Edit User</h4>
+
+<form method="post">
+    <div class="row">
+        <div class="col-sm-6 mt-2">
+            <label asp-for="Id" class="form-label"></label>
+            <input asp-for="Id" class="form-control" placeholder="ID" readonly />
+        </div>
+        <div class="col-sm-6 mt-2">
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" class="form-control" placeholder="Email" />
+            <span class="form-text text-danger" asp-validation-for="Email"></span>
+        </div>
+        <div class="col-sm-6 mt-2">
+            <label asp-for="Username" class="form-label"></label>
+            <input asp-for="Username" class="form-control" placeholder="Username" />
+            <span class="form-text text-danger" asp-validation-for="Username"></span>
+        </div>
+        <div class="col-sm-6 mt-2">
+            <label asp-for="City" class="form-label"></label>
+            <input asp-for="City" class="form-control" placeholder="City" />
+            <span class="form-text text-danger" asp-validation-for="City"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card mt-2">
+                <div class="card-header">
+                    <h4>User Roles</h4>
+                </div>
+                <div class="card-body">
+                    @if (Model.Roles.Any())
+                    {
+                        foreach (var role in Model.Roles)
+                        {
+                            <h5>@role</h5>
+                        }
+                    }
+                    else
+                    {
+                        <h5>No Role found for this User</h5>
+                    }
+                </div>
+                <div class="card-footer">
+                    <a class="btn btn-primary" asp-action="EditUserRoles" asp-controller="Administration" asp-route-userid="@Model.Id">Add / Remove Role</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card mt-2">
+                <div class="card-header">
+                    <h4>User Claims</h4>
+                </div>
+                <div class="card-body">
+                    @if (Model.Claims.Any())
+                    {
+                        foreach (var claim in Model.Claims)
+                        {
+                            <h5>@claim</h5>
+                        }
+                    }
+                    else
+                    {
+                        <h5>No Claim found for this User</h5>
+                    }
+                </div>
+                <div class="card-footer">
+                    <a class="btn btn-primary" asp-action="EditUserClaims" asp-controller="Administration" asp-route-userid="@Model.Id">Add / Remove Claim</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div asp-validation-summary="All" class="col-12 text-danger"></div>
+        <div class="col-12 mt-2">
+            <button class="btn btn-success" type="submit">Update</button>
+            <a class="btn btn-warning" asp-controller="Administration" asp-action="ListUsers">Cancel</a>
+        </div>
+    </div>
+</form>

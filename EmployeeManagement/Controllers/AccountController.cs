@@ -58,13 +58,17 @@ namespace EmployeeManagement.Controllers
                 var result = await userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                    {
+                        return RedirectToAction("ListUsers", "Administration");
+                    }
                     await signInManager.SignInAsync(user, isPersistent: false);
                     return RedirectToAction("Index", "Home");
                 }
 
-                foreach (var item in result.Errors)
+                foreach (var error in result.Errors)
                 {
-                    ModelState.AddModelError(string.Empty, item.Description);
+                    ModelState.AddModelError(error.Code, error.Description);
                 }
             }
             return View();
@@ -83,7 +87,7 @@ namespace EmployeeManagement.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+                var result = await signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, false);
                 if (result.Succeeded)
                 {
                     if (!string.IsNullOrEmpty(returnUrl))
@@ -96,6 +100,7 @@ namespace EmployeeManagement.Controllers
                     return RedirectToAction("Index", "Home"); //or use LocalRedirect(returnUrl) to throw Exception
                     //return View("Error"); //show error page
                 }
+
                 ModelState.AddModelError(string.Empty, "Invalid Login Attempt!");
             }
             return View();

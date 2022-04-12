@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeManagement.ViewModels
 {
-    public class RoleCreateViewModel
+    public class CreateRoleViewModel
     {
         [Required]
         [Display(Name = "Role Name")]

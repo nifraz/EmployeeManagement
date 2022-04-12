@@ -77,7 +77,7 @@ namespace EmployeeManagement.Controllers
                 return View("EmployeeNotFound", id);
             }
 
-            var employeeDetailsViewModel = new EmployeeDetailsViewModel()
+            var employeeDetailsViewModel = new EmployeeViewModel()
             {
                 Employee = employee,
                 //PageTitle = "Employee Details"
@@ -92,7 +92,7 @@ namespace EmployeeManagement.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(EmployeeCreateViewModel model)
+        public IActionResult Create(CreateEmployeeViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -127,7 +127,7 @@ namespace EmployeeManagement.Controllers
             return View();
         }
 
-        private string ProcessUploadedImage(EmployeeCreateViewModel model)
+        private string ProcessUploadedImage(CreateEmployeeViewModel model)
         {
             string uniqueFileName = default;
             if (model.Photo != default)
