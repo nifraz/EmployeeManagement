@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace EmployeeManagement.Controllers
@@ -146,6 +147,66 @@ namespace EmployeeManagement.Controllers
             if (!result.Succeeded)
             {
                 ModelState.AddModelError(string.Empty, "Cannot add selected roles to user.");
+                return View(model);
+            }
+
+            return RedirectToAction("EditUser", "Administration", new { Id = user.Id });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditUserClaims(string userId)
+        {
+            var user = await userManager.FindByIdAsync(userId);
+            if (user == default)
+            {
+                ViewBag.ErrorMsg = $"The user id {userId} cannot be found.";
+                return View("Error");
+            }
+
+            var existingUserClaims = await userManager.GetClaimsAsync(user);
+
+            var model = new UserClaimViewModel()
+            {
+                UserId = user.Id
+            };
+
+            foreach (var claim in ClaimStore.AllClaims)
+            {
+                var userClaim = new UserClaim()
+                {
+                    ClaimType = claim.Type
+                };
+
+                userClaim.IsSelected = existingUserClaims.Any(c => c.Type == claim.Type);
+                model.UserClaims.Add(userClaim);
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditUserClaims(UserClaimViewModel model, string userId)
+        {
+            var user = await userManager.FindByIdAsync(userId);
+            if (user == default)
+            {
+                ViewBag.ErrorMsg = $"The user id {userId} cannot be found.";
+                return View("Error");
+            }
+
+            var claims = await userManager.GetClaimsAsync(user);
+
+            var result = await userManager.RemoveClaimsAsync(user, claims);
+            if (!result.Succeeded)
+            {
+                ModelState.AddModelError(string.Empty, "Cannot remove user claims.");
+                return View(model);
+            }
+
+            result = await userManager.AddClaimsAsync(user, model.UserClaims.Where(uc => uc.IsSelected).Select(uc => new Claim(uc.ClaimType, uc.ClaimType)));
+            if (!result.Succeeded)
+            {
+                ModelState.AddModelError(string.Empty, "Cannot add selected claims to user.");
                 return View(model);
             }
 
