@@ -38,7 +38,7 @@
                     }
                 </div>
                 <div class="card-footer">
-                    <a class="btn btn-primary" asp-action="EditUsersInRole" asp-controller="Administration" asp-route-roleid="@Model.Id">Add / Remove User</a>
+                    <a class="btn btn-sm btn-primary" asp-action="EditRoleUsers" asp-controller="Administration" asp-route-roleid="@Model.Id">Add / Remove User</a>
                 </div>
             </div>
         </div>
@@ -48,7 +48,7 @@
         <div asp-validation-summary="All" class="col-12 text-danger"></div>
         <div class="col-12 mt-2">
             <button class="btn btn-success" type="submit">Update</button>
-            <a class="btn btn-danger" asp-controller="Administration" asp-action="ListRoles">Cancel</a>
+            <a class="btn btn-warning" asp-controller="Administration" asp-action="ListRoles">Cancel</a>
         </div>
     </div>
 </form>

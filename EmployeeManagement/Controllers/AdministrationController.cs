@@ -93,6 +93,65 @@ namespace EmployeeManagement.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> EditUserRoles(string userId)
+        {
+            ViewBag.UserId = userId;
+
+            var user = await userManager.FindByIdAsync(userId);
+            if (user == default)
+            {
+                ViewBag.ErrorMsg = $"The user id {userId} cannot be found.";
+                return View("Error");
+            }
+
+            var model = new List<UserRoleViewModel>();
+
+            foreach (var role in roleManager.Roles.ToList())
+            {
+                var userRole = new UserRoleViewModel()
+                {
+                    RoleId = role.Id,
+                    RoleName = role.Name
+                };
+                userRole.IsSelected = await userManager.IsInRoleAsync(user, role.Name);
+                model.Add(userRole);
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditUserRoles(IList<UserRoleViewModel> model, string userId)
+        {
+            ViewBag.UserId = userId;
+
+            var user = await userManager.FindByIdAsync(userId);
+            if (user == default)
+            {
+                ViewBag.ErrorMsg = $"The user id {userId} cannot be found.";
+                return View("Error");
+            }
+
+            var roles = await userManager.GetRolesAsync(user);
+
+            var result = await userManager.RemoveFromRolesAsync(user, roles);
+            if (!result.Succeeded)
+            {
+                ModelState.AddModelError(string.Empty, "Cannot remove user from roles.");
+                return View(model);
+            }
+
+            result = await userManager.AddToRolesAsync(user, model.Where(m => m.IsSelected).Select(m => m.RoleName));
+            if (!result.Succeeded)
+            {
+                ModelState.AddModelError(string.Empty, "Cannot add selected roles to user.");
+                return View(model);
+            }
+
+            return RedirectToAction("EditUser", "Administration", new { Id = user.Id });
+        }
+
         [HttpPost]
         public async Task<IActionResult> DeleteUser(string id)
         {
@@ -221,7 +280,7 @@ namespace EmployeeManagement.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> EditUsersInRole(string roleId)
+        public async Task<IActionResult> EditRoleUsers(string roleId)
         {
             ViewBag.RoleId = roleId;
 
@@ -249,7 +308,7 @@ namespace EmployeeManagement.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditUsersInRole(IList<RoleUserViewModel> model, string roleId)
+        public async Task<IActionResult> EditRoleUsers(IList<RoleUserViewModel> model, string roleId)
         {
             ViewBag.RoleId = roleId;
 
@@ -327,7 +386,7 @@ namespace EmployeeManagement.Controllers
                 ViewBag.ErrorMsg = $"Role {role.Name} cannot be deleted as there are Users in this role. If you want to delete the role, try removing the users from the role first and then try deleting the role again.";
                 return View("Exception");
             }
-
+            // or first check if any user exist for the given role and list them
             return View("ListRoles");
         }
     }
