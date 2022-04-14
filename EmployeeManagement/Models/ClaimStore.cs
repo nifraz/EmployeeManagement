@@ -10,9 +10,9 @@ namespace EmployeeManagement.Models
     {
         public static IList<Claim> AllClaims = new List<Claim>()
         {
-            new Claim("Create Role", "Create Role"),
-            new Claim("Update Role", "Update Role"),
-            new Claim("Delete Role", "Delete Role")
+            new Claim("Create Role", "false"),
+            new Claim("Edit Role", "false"),
+            new Claim("Delete Role", "false")
         };
     }
 }

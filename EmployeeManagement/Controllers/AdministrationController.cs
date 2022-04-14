@@ -47,7 +47,7 @@ namespace EmployeeManagement.Controllers
             }
 
             var roles = await userManager.GetRolesAsync(user);
-            var claims = (await userManager.GetClaimsAsync(user)).Select(c => c.Value).ToList();
+            var claims = (await userManager.GetClaimsAsync(user)).Select(c => $"{c.Type} : {c.Value}").ToList();
 
             var model = new EditUserViewModel()
             {
@@ -177,7 +177,7 @@ namespace EmployeeManagement.Controllers
                     ClaimType = claim.Type
                 };
 
-                userClaim.IsSelected = existingUserClaims.Any(c => c.Type == claim.Type);
+                userClaim.IsSelected = existingUserClaims.Any(c => c.Type == claim.Type && c.Value == "true");
                 model.UserClaims.Add(userClaim);
             }
 
@@ -203,7 +203,8 @@ namespace EmployeeManagement.Controllers
                 return View(model);
             }
 
-            result = await userManager.AddClaimsAsync(user, model.UserClaims.Where(uc => uc.IsSelected).Select(uc => new Claim(uc.ClaimType, uc.ClaimType)));
+            //result = await userManager.AddClaimsAsync(user, model.UserClaims.Where(uc => uc.IsSelected).Select(uc => new Claim(uc.ClaimType, uc.ClaimType)));   //old without value: true / false
+            result = await userManager.AddClaimsAsync(user, model.UserClaims.Select(uc => new Claim(uc.ClaimType, uc.IsSelected ? "true" : "false")));  //store only selected claims to avoid foreign key check when deleting user
             if (!result.Succeeded)
             {
                 ModelState.AddModelError(string.Empty, "Cannot add selected claims to user.");
@@ -247,12 +248,14 @@ namespace EmployeeManagement.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "CreateRolePolicy")]
         public IActionResult CreateRole()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize(Policy = "CreateRolePolicy")]
         public async Task<IActionResult> CreateRole(CreateRoleViewModel model)
         {
             if (ModelState.IsValid)
@@ -278,6 +281,7 @@ namespace EmployeeManagement.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "EditRolePolicy")]
         public async Task<IActionResult> EditRole(string id)
         {
             var role = await roleManager.FindByIdAsync(id);
@@ -311,6 +315,7 @@ namespace EmployeeManagement.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "EditRolePolicy")]
         public async Task<IActionResult> EditRole(EditRoleViewModel model)
         {
             if (ModelState.IsValid)
@@ -415,6 +420,7 @@ namespace EmployeeManagement.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "DeleteRolePolicy")]
         public async Task<IActionResult> DeleteRole(string id)
         {
             var role = await roleManager.FindByIdAsync(id);

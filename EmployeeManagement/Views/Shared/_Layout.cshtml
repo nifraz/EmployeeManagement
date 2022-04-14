@@ -82,10 +82,6 @@
     <section class="container-fluid">
         @RenderBody()
     </section>
-    @if (IsSectionDefined("Scripts"))
-    {
-        @RenderSection("Scripts")
-    }
     @*@RenderSection("Script", required: false)*@
 
     @*<environment include="Development">
@@ -99,5 +95,9 @@
             </script>
         </environment>*@
     <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+    @if (IsSectionDefined("Scripts"))
+    {
+        @RenderSection("Scripts")
+    }
 </body>
 </html>

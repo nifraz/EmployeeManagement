@@ -34,7 +34,7 @@ namespace EmployeeManagement
             services.AddIdentity<ApplicationUser, IdentityRole>(o =>
             {
                 o.User.RequireUniqueEmail = true;
-                o.Password.RequiredLength = 4;
+                o.Password.RequiredLength = 4;  //configure password options
                 o.Password.RequiredUniqueChars = 3;
                 o.Password.RequireDigit = false;
             }).AddEntityFrameworkStores<EmDbContext>();
@@ -52,8 +52,21 @@ namespace EmployeeManagement
                         new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build()));
                 options.EnableEndpointRouting = false;
             });
+            services.AddAuthorization(o =>
+            {
+                //claim policy
+                o.AddPolicy("CreateRolePolicy", p => p.RequireClaim("Create Role", "true"));
+                o.AddPolicy("EditRolePolicy", p => p.RequireClaim("Edit Role", "true"));
+                o.AddPolicy("DeleteRolePolicy", p => p.RequireClaim("Delete Role", "true"));    //chain RequireClaim(...) for AND
+                //role policy
+                //o.AddPolicy("AdminRolePolicy", p => p.RequireRole("Admin"));    //using claim instead of role
+            });
             //services.AddMvcCore(options => options.EnableEndpointRouting = false).AddXmlSerializerFormatters();
-            services.ConfigureApplicationCookie(o => o.LoginPath = new PathString("/Account/Login"));   //configure login path
+            services.ConfigureApplicationCookie(o =>
+            {
+                o.LoginPath = new PathString("/Account/Login"); //configure login path (default: /Account/Login)
+                o.AccessDeniedPath = new PathString("/Account/AccessDenied");  //configure accessdenied path (default: /Account/AccessDenied)
+            });
             //var serviceDescriptor = new ServiceDescriptor(typeof(IEmployeeRepository), typeof(MockEmployeeRepository), ServiceLifetime.Singleton);
             services.AddScoped<IEmployeeRepository, SqlEmployeeRepository>();
         }
