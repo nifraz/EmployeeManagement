@@ -95,6 +95,7 @@ namespace EmployeeManagement.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "EditUserRolesAndClaimsPolicy")]
         public async Task<IActionResult> EditUserRoles(string userId)
         {
             ViewBag.UserId = userId;
@@ -123,6 +124,7 @@ namespace EmployeeManagement.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "EditUserRolesAndClaimsPolicy")]
         public async Task<IActionResult> EditUserRoles(IList<UserRoleViewModel> model, string userId)
         {
             ViewBag.UserId = userId;

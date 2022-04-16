@@ -1,4 +1,5 @@
 using EmployeeManagement.Models;
+using EmployeeManagement.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -58,7 +59,8 @@ namespace EmployeeManagement
                 //claim policy
                 o.AddPolicy("CreateRolePolicy", p => p.RequireClaim("Create Role", "true"));
                 //o.AddPolicy("EditRolePolicy", p => p.RequireRole("Admin").RequireClaim("Edit Role", "true").RequireRole("Super Admin"));
-                o.AddPolicy("EditRolePolicy", p => p.RequireAssertion(editRoleHandler));  //custom policy
+                o.AddPolicy("EditRolePolicy", p => p.RequireAssertion(EditRoleHandler));  //custom policy via assertion
+                o.AddPolicy("EditUserRolesAndClaimsPolicy", p => p.AddRequirements(new ManageAdminRolesAndClaimsRequirement()));   //custom policy without Func that requires logged in user and other services via DI
                 o.AddPolicy("DeleteRolePolicy", p => p.RequireClaim("Delete Role", "true"));    //chain RequireClaim(...) for AND
                 //role policy
                 //o.AddPolicy("AdminRolePolicy", p => p.RequireRole("Admin"));    //using claim instead of role
@@ -71,9 +73,12 @@ namespace EmployeeManagement
             });
             //var serviceDescriptor = new ServiceDescriptor(typeof(IEmployeeRepository), typeof(MockEmployeeRepository), ServiceLifetime.Singleton);
             services.AddScoped<IEmployeeRepository, SqlEmployeeRepository>();
+
+            services.AddSingleton<IAuthorizationHandler, CanEditOnlyOtherAdminRolesAndClaimsHandler>();
+            services.AddSingleton<IAuthorizationHandler, SuperAdminHandler>();  //handlers for same requirement, performs OR logic
         }
 
-        private static bool editRoleHandler(AuthorizationHandlerContext context)
+        private static bool EditRoleHandler(AuthorizationHandlerContext context)
         {
             return (context.User.IsInRole("Admin") && context.User.HasClaim(c => c.Type == "Edit Role" && c.Value == "true")) || context.User.IsInRole("Super Admin");
         }
