@@ -15,7 +15,7 @@ namespace EmployeeManagement.Controllers
 {
     //[Authorize(Roles = "Admin,User")]   //user must be either one
     //[Authorize(Roles = "Admin")][Authorize(Roles = "User")] //user must be all
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     public class AdministrationController : Controller
     {
         private readonly RoleManager<IdentityRole> roleManager;

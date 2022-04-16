@@ -46,7 +46,8 @@ namespace EmployeeManagement
             //    o.Password.RequiredUniqueChars = 3;
             //});
 
-            services.AddMvc(options => {
+            services.AddMvc(options =>
+            {
                 options.Filters.Add(    //enable global authorization
                     new AuthorizeFilter(
                         new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build()));
@@ -56,7 +57,8 @@ namespace EmployeeManagement
             {
                 //claim policy
                 o.AddPolicy("CreateRolePolicy", p => p.RequireClaim("Create Role", "true"));
-                o.AddPolicy("EditRolePolicy", p => p.RequireClaim("Edit Role", "true"));
+                //o.AddPolicy("EditRolePolicy", p => p.RequireRole("Admin").RequireClaim("Edit Role", "true").RequireRole("Super Admin"));
+                o.AddPolicy("EditRolePolicy", p => p.RequireAssertion(editRoleHandler));  //custom policy
                 o.AddPolicy("DeleteRolePolicy", p => p.RequireClaim("Delete Role", "true"));    //chain RequireClaim(...) for AND
                 //role policy
                 //o.AddPolicy("AdminRolePolicy", p => p.RequireRole("Admin"));    //using claim instead of role
@@ -69,6 +71,11 @@ namespace EmployeeManagement
             });
             //var serviceDescriptor = new ServiceDescriptor(typeof(IEmployeeRepository), typeof(MockEmployeeRepository), ServiceLifetime.Singleton);
             services.AddScoped<IEmployeeRepository, SqlEmployeeRepository>();
+        }
+
+        private static bool editRoleHandler(AuthorizationHandlerContext context)
+        {
+            return (context.User.IsInRole("Admin") && context.User.HasClaim(c => c.Type == "Edit Role" && c.Value == "true")) || context.User.IsInRole("Super Admin");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
