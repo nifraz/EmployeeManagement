@@ -26,6 +26,10 @@ namespace EmployeeManagement.Security
             {
                 context.Succeed(requirement);
             }
+            //else
+            //{
+            //    context.Fail();   //calling fail() explicitly will fail the entire requirement regardless of other handlers. only call if intended
+            //}
             return Task.CompletedTask;
         }
     }
